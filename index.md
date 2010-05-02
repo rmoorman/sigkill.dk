@@ -11,7 +11,7 @@ others.  I also used to [blog][5], although not any more.
 
 For those curious about technical details, this site is written in
 shell script and Markdown (yes, really) via the amazing [werc][6]
-framework.
+anti-framework.  The source code is available [here][sigkillsource].
 
 [1]: /me
 [2]: /programs
@@ -19,3 +19,4 @@ framework.
 [4]: /hacks
 [5]: /blog
 [6]: http://werc.cat-v.org/
+[sigkillsource]: http://github.com/Athas/sigkill.dk
