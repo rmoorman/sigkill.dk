@@ -41,7 +41,7 @@ fn get_shell_desc {
    /^[^#]/ { if (indesc==2) { descover=1; } }
    /^$/ { if (indesc==2) { descover=1; } }
    // { if (indesc==2 && descover!=1) { print $0 } }' \
-   | sed 's/^#//' | $formatter
+   | sed 's/^# ?//' | $formatter
 }
 
 fn list_hacks {
