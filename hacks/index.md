@@ -18,7 +18,8 @@ incompatible in many fundamental and seemingly arbitrary ways, for
 example by using `else` instead of `if not` as in Plan 9 `rc`.  Sadly,
 this is the version you will get if you merely install the `rc`
 package in Debian.  Install the `9base` package instead, and add
-`/usr/lib/plan9/bin` to your path.
+`/usr/lib/plan9/bin` to your path.  Also read [this guide to setting
+up Plan 9 userland tools](/writings/guides/plan_9_tools).
 
 %{
 hackpath=/var/www/sigkill.dk/pub/scripts
