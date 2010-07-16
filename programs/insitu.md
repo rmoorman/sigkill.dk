@@ -22,7 +22,15 @@ contain the output read from the command, followed by the rest of the
 original contents of _file_.  The part of _file_ overwritten by the
 command output will be lost.
 
-Insitu runs the command with `$SHELL -c command`, substituting
+With `insitu`, the above would be written as
+
+    insitu foo 'grep bar'
+
+Another handy use is to prepend something to an existing file:
+
+    insitu foo 'echo whatever; cat'
+
+`Insitu` runs the command with `$SHELL -c command`, substituting
 `/bin/sh` for `$SHELL` if the latter is not set.
 
 Download
