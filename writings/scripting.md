@@ -59,3 +59,76 @@ bite the bullet and the biggest hammer in the toolbox:
 This exploits a slightly obscure Awk facility for defining variables
 (in this case, `STR`) from the command line.
 
+Multiple pipes
+--
+
+Sometimes you need to start a program with specific file descriptors
+open.  This is easy if you need them bound to files, as you can simply
+provide the optional file descriptor parameter to the input
+redirection operator:
+
+    prog 3</path/to/file 4</path/to/other_file
+
+In other cases, you need a program to continously receive the output
+of several other programs, but a standard Unix shell pipeline will
+connect standard outputs to standard inputs, which means that a
+process cannot more than a single piped input stream.  You can work
+around this by having producers write to named pipes (`mkfifo`), which
+can be used like files as above, but this results in the hassle and
+complexity of file system cleanup.  An alternative is to exploit the
+file descriptor duplication operator (`<&`) to copy the standard input
+file descriptor before starting the next stage of the pipeline.  The
+result will be every stage of the pipeline being available in a
+different file descriptor.  An demonstration to clarify:
+
+    loop() {
+      while true; do echo $1; sleep 1; done
+    }
+    loop foo | (loop bar | (loop baz | (cat <&3 & cat <&4 & cat <&5) 5<&0 0<&-) 4<&0 0<&-) 3<&0 0<&-
+
+At each right-hand side of a file descriptor, the standard input
+stream is copied to another file desciptor, and then closed (with
+`0<&-`), which may be necessary to make reading from the new file
+descriptor reliable, depending on whether any of the programs touch
+standard input.  The innermost program (`cat <&3 & cat <&4 & cat <&5`)
+has access to the output of the three producing programs via file
+descriptors 3, 4 and 5.  The parentheses are necessary to ensure the
+file redirection operators work in the proper subshells.
+
+Of course, the above is rather ugly and cumbersome.  The following
+shell function provides a nicer syntax, but requires you to define
+each step in the pipeline as a function by itself.
+
+    multipipe() {
+        if [ $# -eq 1 ]; then
+            $1
+        else
+            cmd=$1
+            shift
+            fd=$1
+            shift
+            $cmd | eval multipipe '"$@"' "$fd<&0" "0<&-"
+        fi
+    }
+
+    loop() {
+        while true; do echo $1; sleep 1; done
+    }
+
+    loopfoo() {
+        loop foo
+    }
+
+    loopbar() {
+        loop bar
+    }
+
+    loopbaz() {
+        loop baz
+    }
+
+    body() {
+        cat <&3 & cat <&4 & cat <&5
+    }
+
+    multipipe loopfoo 3 loopbar 4 loopbaz 5 body
