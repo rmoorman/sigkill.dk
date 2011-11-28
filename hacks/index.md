@@ -26,12 +26,20 @@ hackpath=/var/www/sigkill.dk/pub/scripts
 webpath=/pub/scripts
 
 fn get_c_desc {
-   awk -F/ ' 
+   awk -F/ '
    BEGIN { indesc=0; descover=0; }
    /^\/\*/ { if (indesc==0) { indesc=1; next; } }
    /^ \*\// { if (indesc==1) { descover=1; next; } }
    // { if (indesc==1 && descover!=1) { print $0 } }' \
    | sed 's/^ \*//' | $formatter
+}
+
+fn get_hs_desc {
+   awk -F/ '
+   BEGIN { indesc=1; descover=0; }
+   /^--/ { if (indesc==1) { print; next; } }
+   { indesc=0; }' \
+   | sed 's/^-- ?//' | $formatter
 }
 
 fn get_shell_desc {
@@ -53,6 +61,9 @@ fn list_hacks {
           echo '<li><h2 class="progName"><a href="'$webpath'/'$progname'">'$progname'</a></h2>'
           if (~ $progname *.c) {
              cat $p | get_c_desc
+          }
+          if (~ $progname *.hs) {
+             cat $p | get_hs_desc
           }
           if not {
              cat $p | get_shell_desc
