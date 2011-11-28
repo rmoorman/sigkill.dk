@@ -43,13 +43,12 @@ fn get_hs_desc {
 }
 
 fn get_shell_desc {
-   awk -F/ ' 
-   BEGIN { indesc=0; descover=0; }
-   /^$/ { if (indesc==0) { indesc=1; } }
-   /^#/ { if (indesc==1) { indesc=2; } }
-   /^[^#]/ { if (indesc==2) { descover=1; } }
-   /^$/ { if (indesc==2) { descover=1; } }
-   // { if (indesc==2 && descover!=1) { print $0 } }' \
+   awk -F/ '
+   BEGIN { indesc=1; skip=0; }
+   /^#!/ { next; skip=1; }
+   /^#/ { if (skip>0) { skip = skip - 1; next; } }
+   /^#/ { if (indesc==1) { print; next; } }
+   { indesc=0; }' \
    | sed 's/^# ?//' | $formatter
 }
 
