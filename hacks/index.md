@@ -74,4 +74,4 @@ fn list_hacks {
 }
 
 list_hacks
-}%
+%}
