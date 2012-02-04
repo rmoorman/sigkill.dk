@@ -11,8 +11,8 @@ the screen.  See the [manpage][] for more information.
 
 The program is written in Haskell, and is intentionally kept simple in
 the interest of robustness, correctness and hackability.
-Configuration, if necessary, is by editing the [`GSMenu/Config.hs`][config.hs]
-file.
+Configuration, if necessary, is by editing the
+[`GSMenu/Config.hs`][config.hs] file.
 
 Downloading and installation
 ----------------------------
@@ -40,5 +40,5 @@ something like the following:
 [dmenu]: http://tools.suckless.org/dmenu/
 [manpage]: manpage
 [gitrepo]: http://github.com/Athas/gsmenu
-[hackage]: http://hackage.haskell.org/package/gsmenu-1.0
+[hackage]: http://hackage.haskell.org/package/gsmenu
 [config.hs]: http://sigkill.dk/pub/code/gsmenu/GSMenu/Config.hs
