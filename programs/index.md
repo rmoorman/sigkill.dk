@@ -1,10 +1,12 @@
-Repository of programs written by me
-========
+Interesting programs
+===
 
-This is where you can find my programs.  These are not all the ones I
-have written, merely the ones I brazenly suspect others might find
-interesting, or that I don't feel bad about showing to the world.  Only somewhat major pieces of code are in this section, smaller hacks are [that way][].
+Herein you can find relatively small programs that are intended to be
+read rather than used.  While I have my doubts about [Literate
+Programming](http://www.literateprogramming.com/) for large programs,
+I still consider its principles extraordinarily valuable, and I will
+try to write programs that are both illustrative and fun to read.
 
-Follow the links at the top.
-
-[that way]: ../hacks
+Pages containing programs will have a "source" link above the menu
+that can be used to download the unformatted source code (literate
+programs will still be literate, though).

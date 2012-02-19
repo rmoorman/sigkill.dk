@@ -1,0 +1,14 @@
+body {
+    background-color: grey;
+}
+
+#menu {
+    float: left;
+    min-width: 20%;
+    background-color: white;
+}
+
+#content {
+    margin-left: 20%;
+    padding-left: 20px;
+}

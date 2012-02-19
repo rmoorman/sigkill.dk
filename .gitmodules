@@ -1,0 +1,18 @@
+[submodule "submodules/scripts"]
+	path = submodules/scripts
+	url = https://github.com/Athas/scripts
+[submodule "submodules/insitu"]
+	path = submodules/insitu
+	url = git@github.com:Athas/insitu.git
+[submodule "submodules/Configuration-Files"]
+	path = submodules/Configuration-Files
+	url = git@github.com:Athas/Configuration-Files.git
+[submodule "submodules/sindre"]
+	path = submodules/sindre
+	url = git@github.com:Athas/Sindre.git
+[submodule "submodules/gsmenu"]
+	path = submodules/gsmenu
+	url = git@github.com:Athas/gsmenu.git
+[submodule "submodules/twelfppr"]
+	path = submodules/twelfppr
+	url = git@github.com:Athas/twelfppr.git

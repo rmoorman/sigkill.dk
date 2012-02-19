@@ -1,0 +1,216 @@
+body {
+  background-color: #eee;
+  font-family: sans-serif;
+  margin: auto;
+  width:900px;
+}
+
+body > * {
+  margin: 1%;
+}
+
+h1 {
+    font-size: 1.2em;
+}
+
+h2 {
+    font-size: 1.1em;
+}
+
+#header, #footer {
+  background-color: #888;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  margin-bottom: 2%;
+  font-variant: small-caps;
+  line-height: 170%;
+}
+
+#header a {
+  font-weight: bold;
+  font-variant: normal;
+  font-family: sans-serif;
+  border: 0;
+}
+
+.superHeader ul {
+  margin: 0;
+}
+
+.superHeader li {
+  display: inline;
+  list-style-type: none;
+  float: right;
+  border-left: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding: 0;
+}
+
+.superHeader a {
+  color: #eee;
+  padding: 5px;
+}
+
+.superHeader a:hover {
+  background-color: #aaa;
+  text-decoration: none;
+}
+
+.headerTitle, .headerTitle a {
+  color: #eee;
+  font-family: serif;
+  margin: 1%;
+}
+
+#headerSubTitle {
+  font-family: serif;
+  font-style: italic;
+  font-size: 75%;
+}
+
+.subHeader ul {
+  margin: 0;
+}
+
+.subHeader li {
+  display: inline;
+  list-style-type: none;
+  border-right: 1px solid #000;
+  margin: 0;
+  padding: 0;
+}
+
+.subHeader a {
+  color: #113;
+  padding: 5px;
+}
+
+.subHeader a:hover, .thisPage {
+  background-color: #eee;
+}
+
+.menu0 {
+  background-color: #999;
+}
+
+.menu0 li {
+    border-right: 1px solid #777;
+}
+
+.menu1 {
+  background-color: #aaa;
+}
+
+.menu1 li {
+    border-right: 1px solid #888;
+}
+
+.menu2 {
+  background-color: #bbb;
+}
+
+.menu2 li {
+    border-right: 1px solid #999;
+}
+
+#hakyllLink {
+  color: #eee;
+  border: 0;
+  margin-left: 5%;
+}
+
+.progName {
+  font-family: monospace;
+}
+
+/* # General styling # */
+
+img {
+  position: relative;
+  float: right;
+}
+
+table {
+  margin: 15px;
+  background-color: transparent;
+  border: 0px dashed #999;
+}
+
+hr {
+  margin: 0;
+}
+
+td {
+  background-color:#DDD;
+  border:1px solid #999;
+  padding:0.2em 20px 0.2em 10px;
+}
+
+a {
+  color: rgb(0, 0, 192);
+}
+
+a:link, a:visited {
+  text-decoration: none;
+  border-bottom: 1px dashed #eee;
+}
+
+a:active, a:hover {
+  text-decoration: underline;
+}
+
+p > a {
+  border: 1px solid transparent;
+  color: rgb(0, 0, 192);
+}
+
+p > a:link, p > a:visited {
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-bottom: 1px dashed #eee;
+}
+
+p > a:active, p > a:hover {
+  border: 1px solid #000;
+}
+
+a img {
+  border: 0px;
+}
+
+li {
+  margin-left: 2%;
+}
+
+h3>a {
+  color: #000;
+  text-decoration: none;
+}
+
+h3>a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+pre {
+  background-color: #ddd;
+  border: 1px solid #bbb;
+  padding-left:0px;
+  margin: 1em;
+}
+
+/* # General util # */
+
+.left {
+  float: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.doNotDisplay {
+  display: none;
+}

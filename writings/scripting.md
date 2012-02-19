@@ -38,10 +38,10 @@ although I believe the above is perfectly elegant.
 Both the subshell method and `sponge` suffer from the same problem,
 namely that the contents of `foo` will be entirely replaced by the
 output of the command, even if the command fails.  Consider using
-[`insitu`](/programs/insitu), which can detect whether the command
-fails, and not truncate in that case.  If you want to be completely
-safe against data loss, you need to produce all output to a temporary
-file and overwrite the original at the end, though.
+[`insitu`](/programs/insitu.html), which can detect whether the
+command fails, and not truncate in that case.  If you want to be
+completely safe against data loss, you need to produce all output to a
+temporary file and overwrite the original at the end, though.
 
 Literal sublines in files
 --
