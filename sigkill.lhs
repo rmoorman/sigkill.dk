@@ -149,6 +149,10 @@ dropping any trailing "index.html" from paths.
 > buildMenu :: FilePath -> [FilePath] -> Menu
 > buildMenu this = foldl (extendMenu this) emptyMenu
 >                  . map (first dropIndex . (id &&& dropExtension . takeFileName))
+>
+> dropIndex :: FilePath -> FilePath
+> dropIndex p | takeBaseName p == "index" = dropFileName p
+>             | otherwise                 = p
 
 > extendMenu :: FilePath -> Menu -> (FilePath, String) -> Menu
 > extendMenu this m (path, name) =
@@ -281,6 +285,9 @@ Listing configuration files.
 Including file sources
 ---
 
+If the page we're compiling has a path in the "source" group, generate
+a button pointing to it.
+
 > addSourceButton :: Compiler (Page a) (Page a)
 > addSourceButton = proc p -> do
 >   sd <- destInGroup $ Just "source" -< ()
@@ -367,7 +374,3 @@ Putting it all together
 >               >>> unixFilter "groff" (words "-m mandoc -T utf8")
 >               >>> unixFilter "col" ["-b"]
 >               >>> arr (fromBody . renderHtml . H.pre . H.toHtml)
-
-> dropIndex :: FilePath -> FilePath
-> dropIndex p | takeBaseName p == "index" = dropFileName p
->             | otherwise                 = p
