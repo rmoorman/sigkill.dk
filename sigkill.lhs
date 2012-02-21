@@ -48,7 +48,8 @@ A level (or "line", if you look at its actual visual appearance) of
 the menu consists of two lists: the elements preceding and succeeding
 the *focused element*.  The focused element itself is the first
 element of the `aftItems` list.  This definition ensures that we have
-at most a single focused element per menu level.
+at most a single focused element per menu level.  Each element is a
+pair consisting of an URL and a name.
 
 > data MenuLevel = MenuLevel { prevItems :: [(FilePath,String)]
 >                            , aftItems  :: [(FilePath,String)]
@@ -93,11 +94,15 @@ Finally, a menu is just a list of menu levels.
 > emptyMenu = Menu []
 
 I am using the [BlazeHTML](http://jaspervdj.be/blaze/) library for
-HTML generation, so the result of printing a menu is an `H.Html`
-value.
+HTML generation, so the result of rendering a menu is an `H.Html`
+value.  The rendering will consist of one HTML `<ul>` block per menu
+level, each with the CSS class `menuN`, where `N` is the number of the
+level.
 
 > showMenu :: Menu -> H.Html
 > showMenu = zipWithM_ showMenuLevel [0..] . menuLevels
+
+The focus element is tagged with the CSS class `thisPage`.
 
 > showMenuLevel :: Int -> MenuLevel -> H.Html
 > showMenuLevel d m =
@@ -109,11 +114,41 @@ value.
 >                                    (l:ls) -> showFocusElem l :
 >                                              map showElem ls
 
+Building the menu
+---
+
+Recall that the directory structure of the site is a tree.  To
+construct a menu, we are given the current node (page) and a list of
+all possible nodes of the tree (all pages on the site), and we then
+construct the minimum tree that contains all nodes on the path from
+the root to the current node, as well as all siblings of those nodes.
+In file system terms, we show the files contained in each directory
+traversed from the root to the current page (as well as any children
+of the current page, if it is a directory).
+
+To begin, we define a function that given the current path, decomposes
+some another path into the part that should be visible.  For example:
+
+    relevant "foo/bar/baz" "foo/bar/quux" = ["foo/","bar/","quux"]
+    relevant "foo/bar/baz" "foo/bar/quux/" = ["foo/","bar/","quux/"]
+    relevant "foo/bar/baz" "foo/bar/quux/zog" = ["foo/","bar/","quux/"]
+    relevant "foo/bar/baz" "quux/zog" = ["quux/"]
+
 > relevant :: FilePath -> FilePath -> [FilePath]
 > relevant this other = relevant' (splitPath this) (splitPath other)
 >   where relevant' (x:xs) (y:ys) = y : if x == y then relevant' xs ys else []
 >         relevant' [] (y:_) = [y]
 >         relevant' _ _ = []
+
+To construct a full menu given the current path and a list of all
+paths, we repeatedly extend it by a single path.  Recall that menu
+elements are pairs of names and paths - we generate those names by
+taking the file name and dropping the extension of the path, also
+dropping any trailing "index.html" from paths.
+
+> buildMenu :: FilePath -> [FilePath] -> Menu
+> buildMenu this = foldl (extendMenu this) emptyMenu
+>                  . map (first dropIndex . (id &&& dropExtension . takeFileName))
 
 > extendMenu :: FilePath -> Menu -> (FilePath, String) -> Menu
 > extendMenu this m (path, name) =
@@ -130,23 +165,41 @@ value.
 >         path' = normalise path
 >         this' = normalise this
 
-> buildMenu :: FilePath -> [FilePath] -> Menu
-> buildMenu this = foldl (extendMenu this) emptyMenu
->                  . map (first dropIndex . (id &&& dropExtension . takeFileName))
+For convenience, we define a Hakyll rule that adds the route of the
+current selection to the group "menu".  This group will contain an
+identifier for every page that should show up in the site menu, with
+the compiler for each identifier generating a pathname.
 
 > addToMenu :: Rules
 > addToMenu = group "menu" $ mapM_ (`create` normalDest) =<< resources
+
+To generate the menu for a given page, we use `requireAll_` to obtain
+a list of everything in the "menu" group (the pathnames) and use it to
+build the menu, which is immediately rendered to HTML.  If a compiler
+has been added to the "menu" group that creates anything but a
+`FilePath`, Hakyll will signal a run-time type error.
 
 > getMenu :: Compiler a String
 > getMenu = this &&& items >>> arr (renderHtml . showMenu . uncurry buildMenu)
 >   where items = requireAll_ $ inGroup $ Just "menu"
 >         this = getRoute >>> arr (fromMaybe "/")
 
+Finally, a menu is added to a page by setting the "menu" metadata
+field.  The default template contains information on where exactly to
+put the menu.
+
 > addMenu :: Compiler (Page a) (Page a)
 > addMenu = id &&& getMenu >>> setFieldA "menu" id
 
 Extracting descriptive texts from small programs.
 ---
+
+I have a number of small programs and scripts of my site, and I want
+to automatically generate a list and description for each of them.
+Each program starts with a descriptive comment containing Markdown
+markup, so the challenge becomes extracting that comment.  I define
+functions for extracting the leading comment from shell, C and
+Haskell, respectively.
 
 > shDocstring :: String -> String
 > shDocstring = unlines
@@ -178,10 +231,9 @@ Extracting descriptive texts from small programs.
 
 > hackCompiler :: Compiler Resource (Page String)
 > hackCompiler = proc r -> do
->   res <- getResourceString -< r
 >   desc <- byExtension (arr shDocstring)
 >           [(".c", arr cDocstring)
->           ,(".hs", arr hsDocstring)] -< res
+>           ,(".hs", arr hsDocstring)] <<< getResourceString -< r
 >   ident <- getIdentifier -< ()
 >   name <- arr (takeFileName . toFilePath) -< ident
 >   dest <- normalDest -< ()
@@ -211,7 +263,7 @@ Listing configuration files.
 >   where addList (p,cs) =
 >           p { pageBody = pageBody p ++ renderHtml (H.ul $ mapM_ asLi cs) }
 >         asLi l = case progname l of
->                    Nothing -> ""
+>                    Nothing -> return ()
 >                    Just k | "." `isPrefixOf` k -> return ()
 >                           | otherwise -> H.li $ do
 >                               H.toHtml k >> H.ul (mapM_ disp l)
@@ -235,7 +287,10 @@ Including file sources
 >   returnA -< case sd of Nothing -> p
 >                         Just sd' -> changeField "topitems" (++button sd') p
 >   where button u = renderHtml $ H.li $ H.a "source"
->                    ! A.href (H.toValue $ "/" ++ u)
+>                    ! A.href (H.toValue $ toUrl u)
+
+Putting it all together
+---
 
 > complement :: Pattern a -> Pattern a
 > complement p = predicate (not . matches p)
@@ -263,7 +318,7 @@ Including file sources
 >   _ <- match contentPages $ do
 >     route $ setExtension "html"
 >     addToMenu
->     compile $ extPageCompiler
+>     compile $ byPattern pageCompiler [("**.man", manCompiler)]
 >               >>> byPattern id [("hacks/index.md", addHacks)
 >                                ,("config/index.md", addConfigs)]
 >               >>> finalizePage
@@ -306,9 +361,6 @@ Including file sources
 > setTitle :: Compiler (Page b) (Page b)
 > setTitle = id &&& getIdentifier >>> setFieldA "title" (arr title)
 >   where title = dropIndex . dropExtension . toFilePath
-
-> extPageCompiler :: Compiler Resource (Page String)
-> extPageCompiler = byPattern pageCompiler [("**.man", manCompiler)]
 
 > manCompiler :: Compiler Resource (Page String)
 > manCompiler = getResourceString
