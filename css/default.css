@@ -214,3 +214,8 @@ pre {
 .doNotDisplay {
   display: none;
 }
+
+.sourceCode {
+    border: 0;
+    background-color: #eee;
+}
